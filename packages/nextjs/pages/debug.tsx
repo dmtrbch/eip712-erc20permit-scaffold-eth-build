@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import type { NextPage } from "next";
 import { useLocalStorage } from "usehooks-ts";
+import { useAccount } from "wagmi";
 import { MetaHeader } from "~~/components/MetaHeader";
 import { ContractUI } from "~~/components/scaffold-eth";
 import { ContractName } from "~~/utils/scaffold-eth/contract";
@@ -14,6 +15,8 @@ const Debug: NextPage = () => {
     selectedContractStorageKey,
     contractNames[0],
   );
+
+  const accountState = useAccount();
 
   useEffect(() => {
     if (!contractNames.includes(selectedContract)) {
@@ -47,13 +50,15 @@ const Debug: NextPage = () => {
                 ))}
               </div>
             )}
-            {contractNames.map(contractName => (
-              <ContractUI
-                key={contractName}
-                contractName={contractName}
-                className={contractName === selectedContract ? "" : "hidden"}
-              />
-            ))}
+            {accountState.address &&
+              contractNames.map(contractName => (
+                <ContractUI
+                  key={contractName}
+                  contractName={contractName}
+                  accountAddress={accountState.address}
+                  className={contractName === selectedContract ? "" : "hidden"}
+                />
+              ))}
           </>
         )}
       </div>
